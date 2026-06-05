@@ -1,3 +1,5 @@
+// Base Pack Code by Snail
+
 import { fetchList } from "../content.js";
 import { embed } from "../util.js";
 import Spinner from "../components/Spinner.js";
