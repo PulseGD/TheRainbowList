@@ -106,7 +106,7 @@ export default {
   async mounted() {
     const normalize = (name) => name.toLowerCase();
 
-    const hiddenUsers = ["finni1505", "d3adspac3"];
+    const hiddenUsers = ["none"];
 
     const processRecords = (records) => {
       return records
