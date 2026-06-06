@@ -104,23 +104,31 @@ export default {
   },
 
   async mounted() {
-    const normalize = (name) => name.toLowerCase();
+      try {
+        const normalize = (name) => (name || "").toLowerCase();
 
     const hiddenUsers = ["none"];
 
-    const processRecords = (records) => {
-      return records
-        .filter(record =>
+    const processRecords = (records = []) => {
+      return records.filter(
+        (record) =>
+          record?.user &&
           !hiddenUsers.includes(normalize(record.user))
-        )
+      );
     };
 
     const list = await fetchList();
-    const packsData = await fetch("/data/_packs.json").then((res) =>
-      res.json()
-    );
 
-    // Apply filtering + renaming once globally
+    const response = await fetch("/data/_packs.json");
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to load packs.json (${response.status})`
+      );
+    }
+
+    const packsData = await response.json();
+
     list.forEach(([level]) => {
       if (level && Array.isArray(level.records)) {
         level.records = processRecords(level.records);
@@ -129,17 +137,12 @@ export default {
 
     this.list = list;
     this.packs = packsData;
+  } catch (err) {
+    console.error("Failed to load pack page:", err);
+  } finally {
     this.loading = false;
-  },
-
-  methods: {
-    embed,
-
-    // Used ONLY for comparisons, not display
-    normalize(name) {
-      return name.toLowerCase();
-    },
-  },
+  }
+},
 
   template: `
     <main v-if="loading">
